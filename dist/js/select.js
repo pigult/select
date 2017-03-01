@@ -37,7 +37,7 @@ var UP = 38;
 var DOWN = 40;
 
 var touchDevice = ('ontouchstart' in document.documentElement);
-var clickEvent = touchDevice ? 'touchstart' : 'click';
+var clickEvent = 'click';
 
 function _useNative() {
   var innerWidth = window.innerWidth;
