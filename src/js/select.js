@@ -16,7 +16,7 @@ const UP = 38;
 const DOWN = 40;
 
 const touchDevice = 'ontouchstart' in document.documentElement;
-const clickEvent = touchDevice ? 'touchstart' : 'click';
+const clickEvent = 'click';
 
 function useNative() {
   const {innerWidth, innerHeight} = window;
