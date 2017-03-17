@@ -165,6 +165,10 @@ class Select extends Evented {
     const tabIndex = this.select.getAttribute('tabindex') || 0;
     this.target.setAttribute('tabindex', tabIndex);
 
+    /* WEB-2996 */
+    var style = getComputedStyle(this.select);
+    this.target.setAttribute("style", "width:" + style.width + "; min-width:" + style.minWidth + "; max-width:" + style.maxWidth);
+
     if (this.options.className) {
       addClass(this.target, this.options.className);
     }
@@ -388,7 +392,15 @@ class Select extends Evented {
       addClass(option, 'select-option');
 
       option.setAttribute('data-value', el.value);
-      option.innerHTML = el.innerHTML;
+
+      /* WEB-2996 */
+      var optionValue = el.innerHTML;
+      if (optionValue.indexOf(";") > 0) {
+        optionValue = optionValue.replace(";", "<span>");
+        optionValue += "</span>";
+      }
+
+      option.innerHTML = optionValue;
 
       if (el.selected) {
         addClass(option, 'select-option-selected');
