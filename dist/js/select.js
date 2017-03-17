@@ -242,8 +242,13 @@ var Select = (function (_Evented) {
       document.body.appendChild(this.drop);
 
       this.drop.addEventListener('click', function (e) {
-        if (hasClass(e.target, 'select-option')) {
-          _this2.pickOption(e.target);
+        /* WEB-2996 */
+        var target = e.target;
+        if (hasClass(e.target.parentElement, 'select-option')) {
+          target = e.target.parentElement;
+        }
+        if (hasClass(target, 'select-option')) {
+          _this2.pickOption(target);
         }
 
         // Built-in selects don't propagate click events in their drop directly
@@ -252,8 +257,13 @@ var Select = (function (_Evented) {
       });
 
       this.drop.addEventListener('mousemove', function (e) {
-        if (hasClass(e.target, 'select-option')) {
-          _this2.highlightOption(e.target);
+        /* WEB-2996 */
+        var target = e.target;
+        if (hasClass(e.target.parentElement, 'select-option')) {
+          target = e.target.parentElement;
+        }
+        if (hasClass(target, 'select-option')) {
+          _this2.highlightOption(target);
         }
       });
 
@@ -275,6 +285,9 @@ var Select = (function (_Evented) {
 
         return;
       }
+
+      /* WEB-2996 */
+      this.drop.setAttribute("style", "width: " + this.target.clientWidth + "px");
 
       addClass(this.drop, 'select-open');
 
@@ -396,7 +409,13 @@ var Select = (function (_Evented) {
       for (var i = 0; i < options.length; ++i) {
         var option = options[i];
         if (option.selected) {
-          this.target.innerHTML = option.innerHTML;
+          /* WEB-2996 */
+          var optionValue = option.innerHTML;
+          if (optionValue.indexOf(";") > 0) {
+            var index = optionValue.indexOf(";");
+            optionValue = optionValue.substring(0, index);
+          }
+          this.target.innerHTML = optionValue;
           break;
         }
       }

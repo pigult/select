@@ -207,8 +207,13 @@ class Select extends Evented {
     document.body.appendChild(this.drop);
 
     this.drop.addEventListener('click', (e) => {
-      if (hasClass(e.target, 'select-option')) {
-        this.pickOption(e.target);
+      /* WEB-2996 */
+      var target = e.target;
+      if (hasClass(e.target.parentElement, 'select-option')) {
+        target = e.target.parentElement;
+      }
+      if (hasClass(target, 'select-option')) {
+        this.pickOption(target);
       }
 
       // Built-in selects don't propagate click events in their drop directly
@@ -217,8 +222,13 @@ class Select extends Evented {
     });
 
     this.drop.addEventListener('mousemove', (e) => {
-      if (hasClass(e.target, 'select-option')) {
-        this.highlightOption(e.target);
+      /* WEB-2996 */
+      var target = e.target;
+      if (hasClass(e.target.parentElement, 'select-option')) {
+        target = e.target.parentElement;
+      }
+      if (hasClass(target, 'select-option')) {
+        this.highlightOption(target);
       }
     });
 
@@ -237,6 +247,9 @@ class Select extends Evented {
 
       return;
     }
+
+    /* WEB-2996 */
+    this.drop.setAttribute("style", "width: " + this.target.clientWidth + "px");
 
     addClass(this.drop, 'select-open');
 
@@ -350,7 +363,13 @@ class Select extends Evented {
     for (let i = 0; i < options.length; ++i) {
       const option = options[i];
       if (option.selected) {
-        this.target.innerHTML = option.innerHTML;
+        /* WEB-2996 */
+        var optionValue = option.innerHTML;
+        if (optionValue.indexOf(";") > 0) {
+          var index = optionValue.indexOf(";");
+          optionValue = optionValue.substring(0, index);
+        }
+        this.target.innerHTML = optionValue;
         break;
       }
     }
