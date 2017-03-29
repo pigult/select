@@ -1,12 +1,12 @@
 /* global Tether */
 
 const {
-  extend,
-  addClass,
-  removeClass,
-  hasClass,
-  getBounds,
-  Evented
+    extend,
+    addClass,
+    removeClass,
+    hasClass,
+    getBounds,
+    Evented
 } = Tether.Utils;
 
 const ENTER = 13;
@@ -25,8 +25,8 @@ function useNative() {
 
 function isRepeatedChar (str) {
   return Array.prototype.reduce.call(str, (a, b) => {
-    return a === b ? b : false;
-  });
+        return a === b ? b : false;
+});
 }
 
 function getFocusedSelect () {
@@ -39,86 +39,86 @@ let searchTextTimeout;
 
 document.addEventListener('keypress', (e) => {
   const select = getFocusedSelect();
-  if (!select || e.charCode === 0) {
+if (!select || e.charCode === 0) {
+  return;
+}
+
+if (e.keyCode === SPACE) {
+  e.preventDefault();
+}
+
+clearTimeout(searchTextTimeout);
+searchTextTimeout = setTimeout(() => {
+  searchText = '';
+}, 500);
+
+searchText += String.fromCharCode(e.charCode);
+
+const options = select.findOptionsByPrefix(searchText);
+
+if (options.length === 1) {
+  // We have an exact match, choose it
+  select.selectOption(options[0]);
+}
+
+if (searchText.length > 1 && isRepeatedChar(searchText)) {
+  // They hit the same char over and over, maybe they want to cycle through
+  // the options that start with that char
+  const repeatedOptions = select.findOptionsByPrefix(searchText[0]);
+
+  if (repeatedOptions.length) {
+    let selected = repeatedOptions.indexOf(select.getChosen());
+
+    // Pick the next thing (if something with this prefix wasen't selected
+    // we'll end up with the first option)
+    selected += 1;
+    selected = selected % repeatedOptions.length;
+
+    select.selectOption(repeatedOptions[selected]);
     return;
   }
+}
 
-  if (e.keyCode === SPACE) {
-    e.preventDefault();
-  }
+if (options.length) {
+  // We have multiple things that start with this prefix.  Based on the
+  // behavior of native select, this is considered after the repeated case.
+  select.selectOption(options[0]);
+  return;
+}
 
-  clearTimeout(searchTextTimeout);
-  searchTextTimeout = setTimeout(() => {
-    searchText = '';
-  }, 500);
-
-  searchText += String.fromCharCode(e.charCode);
-
-  const options = select.findOptionsByPrefix(searchText);
-
-  if (options.length === 1) {
-    // We have an exact match, choose it
-    select.selectOption(options[0]);
-  }
-
-  if (searchText.length > 1 && isRepeatedChar(searchText)) {
-    // They hit the same char over and over, maybe they want to cycle through
-    // the options that start with that char
-    const repeatedOptions = select.findOptionsByPrefix(searchText[0]);
-
-    if (repeatedOptions.length) {
-      let selected = repeatedOptions.indexOf(select.getChosen());
-
-      // Pick the next thing (if something with this prefix wasen't selected
-      // we'll end up with the first option)
-      selected += 1;
-      selected = selected % repeatedOptions.length;
-
-      select.selectOption(repeatedOptions[selected]);
-      return;
-    }
-  }
-
-  if (options.length) {
-    // We have multiple things that start with this prefix.  Based on the
-    // behavior of native select, this is considered after the repeated case.
-    select.selectOption(options[0]);
-    return;
-  }
-
-  // No match at all, do nothing
+// No match at all, do nothing
 })
 
 document.addEventListener('keydown', (e) => {
   // We consider this independently of the keypress handler so we can intercept
   // keys that have built-in functions.
   const select = getFocusedSelect();
-  if (!select) {
-    return;
-  }
+if (!select) {
+  return;
+}
 
-  if ([UP, DOWN, ESCAPE].indexOf(e.keyCode) >= 0) {
-    e.preventDefault();
-  }
+if ([UP, DOWN, ESCAPE].indexOf(e.keyCode) >= 0) {
+  e.preventDefault();
+}
 
-  if (select.isOpen()) {
-    switch(e.keyCode) {
-      case UP:
-      case DOWN:
-        select.moveHighlight(e.keyCode);
-        break;
-      case ENTER:
-        select.selectHighlightedOption();
-        break;
-      case ESCAPE:
-        select.close();
-        select.target.focus();
-    }
-  } else {
-    if ([UP, DOWN, SPACE].indexOf(e.keyCode) >= 0) {
-      select.open();
-    }
+if (select.isOpen()) {
+  switch(e.keyCode) {
+    case UP:
+    case DOWN:
+      select.moveHighlight(e.keyCode);
+      break;
+    case ENTER:
+      select.selectHighlightedOption();
+      break;
+    case ESCAPE:
+      select.close();
+      select.target.focus();
   }
+} else {
+  if ([UP, DOWN, SPACE].indexOf(e.keyCode) >= 0) {
+    select.open();
+  }
+}
 });
 
 
@@ -167,7 +167,10 @@ class Select extends Evented {
 
     /* WEB-2996 */
     var style = getComputedStyle(this.select);
-    this.target.setAttribute("style", "width:" + style.width + "; min-width:" + style.minWidth + "; max-width:" + style.maxWidth);
+    var width = parseInt(style.width)+28 > 0 ? parseInt(style.width)+28 + "px" : "100%";
+    var minWidth = style.minWidth > 0 ? "min-width:" + style.minWidth : "";
+    var maxWidth = style.maxWidth > 0 ? "max-width:" + style.maxWidth : "";
+    this.target.setAttribute("style", "width:" + width + ";" + minWidth + ";" + maxWidth);
 
     if (this.options.className) {
       addClass(this.target, this.options.className);
@@ -177,25 +180,25 @@ class Select extends Evented {
 
     this.target.addEventListener('click', () => {
       if (!this.isOpen()) {
-        this.target.focus();
-      } else {
-        this.target.blur();
-      }
-    });
+      this.target.focus();
+    } else {
+      this.target.blur();
+    }
+  });
 
     this.target.addEventListener('focus', () => {
       addClass(this.target, 'select-target-focused');
-    });
+  });
 
     this.target.addEventListener('blur', ({relatedTarget}) => {
       if (this.isOpen()) {
-        if (relatedTarget && !this.drop.contains(relatedTarget)) {
-          this.close();
-        }
+      if (relatedTarget && !this.drop.contains(relatedTarget)) {
+        this.close();
       }
+    }
 
-      removeClass(this.target, 'select-target-focused');
-    });
+    removeClass(this.target, 'select-target-focused');
+  });
 
     this.select.parentNode.insertBefore(this.target, this.select.nextSibling);
   }
@@ -213,28 +216,28 @@ class Select extends Evented {
     this.drop.addEventListener('click', (e) => {
       /* WEB-2996 */
       var target = e.target;
-      if (hasClass(e.target.parentElement, 'select-option')) {
-        target = e.target.parentElement;
-      }
-      if (hasClass(target, 'select-option')) {
-        this.pickOption(target);
-      }
+    if (hasClass(e.target.parentElement, 'select-option')) {
+      target = e.target.parentElement;
+    }
+    if (hasClass(target, 'select-option')) {
+      this.pickOption(target);
+    }
 
-      // Built-in selects don't propagate click events in their drop directly
-      // to the body, so we don't want to either.
-      e.stopPropagation();
-    });
+    // Built-in selects don't propagate click events in their drop directly
+    // to the body, so we don't want to either.
+    e.stopPropagation();
+  });
 
     this.drop.addEventListener('mousemove', (e) => {
       /* WEB-2996 */
       var target = e.target;
-      if (hasClass(e.target.parentElement, 'select-option')) {
-        target = e.target.parentElement;
-      }
-      if (hasClass(target, 'select-option')) {
-        this.highlightOption(target);
-      }
-    });
+    if (hasClass(e.target.parentElement, 'select-option')) {
+      target = e.target.parentElement;
+    }
+    if (hasClass(target, 'select-option')) {
+      this.highlightOption(target);
+    }
+  });
 
     this.content = document.createElement('div');
     addClass(this.content, 'select-content');
@@ -259,7 +262,7 @@ class Select extends Evented {
 
     setTimeout(() => {
       this.tether.enable();
-    });
+  });
 
     const selectedOption = this.drop.querySelector('.select-option-selected');
 
@@ -287,7 +290,7 @@ class Select extends Evented {
     if (alignToHighlighted === 'always' || (alignToHighlighted === 'auto' && scrollHeight <= clientHeight)) {
       setTimeout(() => {
         positionSelectStyle();
-      });
+    });
     }
 
     this.trigger('open');
@@ -322,28 +325,28 @@ class Select extends Evented {
   bindClick() {
     this.target.addEventListener(clickEvent, (e) => {
       e.preventDefault();
-      this.toggle();
-    });
+    this.toggle();
+  });
 
     document.addEventListener(clickEvent, (event) => {
       if (!this.isOpen()) {
-        return;
-      }
+      return;
+    }
 
-      // Clicking inside dropdown
-      if (event.target === this.drop ||
-          this.drop.contains(event.target)) {
-        return;
-      }
+    // Clicking inside dropdown
+    if (event.target === this.drop ||
+        this.drop.contains(event.target)) {
+      return;
+    }
 
-      // Clicking target
-      if (event.target === this.target ||
-          this.target.contains(event.target)) {
-        return;
-      }
+    // Clicking target
+    if (event.target === this.target ||
+        this.target.contains(event.target)) {
+      return;
+    }
 
-      this.close();
-    });
+    this.close();
+  });
   }
 
   setupTether() {
@@ -446,16 +449,16 @@ class Select extends Evented {
     text = text.toLowerCase();
 
     return Array.prototype.filter.call(options, (option) => {
-      return option.innerHTML.toLowerCase().substr(0, text.length) === text;
-    });
+          return option.innerHTML.toLowerCase().substr(0, text.length) === text;
+  });
   }
 
   findOptionsByValue(val) {
     let options = this.drop.querySelectorAll('.select-option');
 
     return Array.prototype.filter.call(options, (option) => {
-      return option.getAttribute('data-value') === val;
-    });
+          return option.getAttribute('data-value') === val;
+  });
   }
 
   getChosen() {
@@ -540,8 +543,8 @@ class Select extends Evented {
     if (close) {
       setTimeout(() => {
         this.close();
-        this.target.focus();
-      });
+      this.target.focus();
+    });
     }
   }
 

@@ -197,7 +197,10 @@ var Select = (function (_Evented) {
 
       /* WEB-2996 */
       var style = getComputedStyle(this.select);
-      this.target.setAttribute("style", "width:" + style.width + "; min-width:" + style.minWidth + "; max-width:" + style.maxWidth);
+      var width = parseInt(style.width) + 28 > 0 ? parseInt(style.width) + 28 + "px" : "100%";
+      var minWidth = style.minWidth > 0 ? "min-width:" + style.minWidth : "";
+      var maxWidth = style.maxWidth > 0 ? "max-width:" + style.maxWidth : "";
+      this.target.setAttribute("style", "width:" + width + ";" + minWidth + ";" + maxWidth);
 
       if (this.options.className) {
         addClass(this.target, this.options.className);
