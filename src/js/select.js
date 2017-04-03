@@ -166,8 +166,14 @@ class Select extends Evented {
     this.target.setAttribute('tabindex', tabIndex);
 
     /* WEB-2996 */
+      var hidden = this.select.getAttribute('hidden');
+      if (hidden) {
+        this.target.setAttribute('hidden', hidden);
+      } else {
+        this.target.removeAttribute('hidden');
+      }
     var style = getComputedStyle(this.select);
-    var width = parseInt(style.width)+28 > 0 ? parseInt(style.width)+28 + "px" : "100%";
+    var width = "100%";
     var minWidth = style.minWidth > 0 ? "min-width:" + style.minWidth : "";
     var maxWidth = style.maxWidth > 0 ? "max-width:" + style.maxWidth : "";
     this.target.setAttribute("style", "width:" + width + ";" + minWidth + ";" + maxWidth);
@@ -365,7 +371,14 @@ class Select extends Evented {
 
   renderTarget() {
     this.target.innerHTML = '';
-
+      /* WEB-2996 */
+    var hidden = this.select.getAttribute('hidden');
+      if (hidden) {
+        this.target.setAttribute('hidden', hidden);
+      } else {
+        this.target.removeAttribute('hidden');
+      }
+      
     const options = this.select.querySelectorAll('option');
     for (let i = 0; i < options.length; ++i) {
       const option = options[i];
