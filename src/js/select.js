@@ -20,7 +20,7 @@ const clickEvent = 'click';
 
 function useNative() {
   const {innerWidth, innerHeight} = window;
-  return touchDevice && (innerWidth <= 640 || innerHeight <= 640);
+  return false;
 }
 
 function isRepeatedChar (str) {
