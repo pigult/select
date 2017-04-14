@@ -43,7 +43,7 @@ function _useNative() {
   var innerWidth = window.innerWidth;
   var innerHeight = window.innerHeight;
 
-  return touchDevice && (innerWidth <= 640 || innerHeight <= 640);
+  return false;
 }
 
 function isRepeatedChar(str) {
