@@ -26,6 +26,6 @@
     "tests"
   ],
   "dependencies": {
-    "tether": "~1.0.2"
+    "tether": "https://github.com/pigult/tether.git#43951ae5c1c352a949d1c5dd8ad194a601e61c33"
   }
 }
